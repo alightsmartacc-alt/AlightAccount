@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Organization - Alight</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo { font-size: 2.2rem; font-weight: 700; color: #1e40af; }
+        .search-container {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        .org-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .org-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+        .org-item:hover { background: #f8fafc; }
+        .org-item:last-child { border-bottom: none; }
+        .emoji { font-size: 1.8rem; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">alight</div>
+        <h2>Find your organization</h2>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search company or organization..." onkeyup="filterOrgs()">
+
+        <div class="org-list" id="orgList">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <script>
+        const organizations = [
+            { name: "Boeing", emoji: "✈️" },
+            { name: "United Airlines", emoji: "🛫" },
+            { name: "Siemens Energy", emoji: "⚡" },
+            { name: "General Electric", emoji: "🏭" },
+            { name: "Lockheed Martin", emoji: "🛡️" }
+        ];
+
+        function renderOrgs(filtered) {
+            const container = document.getElementById('orgList');
+            container.innerHTML = "";
+            filtered.forEach(org => {
+                const div = document.createElement('div');
+                div.className = "org-item";
+                div.innerHTML = `
+                    <span class="emoji">${org.emoji}</span>
+                    <strong>${org.name}</strong>
+                `;
+                div.onclick = () => {
+                    sessionStorage.setItem('selectedCompany', org.name);
+                    window.location.href = "login.html";
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function filterOrgs() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = organizations.filter(o => 
+                o.name.toLowerCase().includes(term)
+            );
+            renderOrgs(filtered.length ? filtered : organizations);
+        }
+
+        // Initial render
+        renderOrgs(organizations);
+    </script>
+</body>
+</html>
