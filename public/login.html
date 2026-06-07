@@ -12,15 +12,8 @@
             min-height: 100vh;
             padding: 20px 10px;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .company-logo {
-            max-width: 180px;
-            height: auto;
-            margin: 15px 0;
-        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .company-logo { max-width: 180px; height: auto; margin: 15px 0; }
         .title {
             color: #003087;
             font-size: 1.35rem;
@@ -36,19 +29,8 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        label {
-            display: block;
-            margin: 18px 0 6px;
-            font-weight: 600;
-            color: #1e2937;
-        }
-        input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #94a3b8;
-            border-radius: 4px;
-            font-size: 1.05rem;
-        }
+        label { display: block; margin: 18px 0 6px; font-weight: 600; color: #1e2937; }
+        input { width: 100%; padding: 12px 14px; border: 1px solid #94a3b8; border-radius: 4px; font-size: 1.05rem; }
         button {
             width: 100%;
             padding: 14px;
@@ -60,13 +42,6 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.85rem;
-            color: #475569;
-            line-height: 1.5;
         }
     </style>
 </head>
@@ -92,32 +67,16 @@
         </form>
     </div>
 
-    <div class="footer">
-        By logging on, you agree to the Terms of Use.<br>
-        Unauthorized access is prohibited.
-    </div>
-
     <script>
-        // Load selected company logo
         const company = sessionStorage.getItem('selectedCompany') || "Your Organization";
         const logoUrl = sessionStorage.getItem('companyLogo');
 
         const logoImg = document.getElementById('companyLogoImg');
-        if (logoUrl) {
-            logoImg.src = logoUrl;
-        } else {
-            // Default Boeing logo
-            logoImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
-        }
-
-        // Fallback if image fails to load
-        logoImg.onerror = () => {
-            logoImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
-        };
+        if (logoUrl) logoImg.src = logoUrl;
+        else logoImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const address = document.getElementById('address').value;
