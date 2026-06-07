@@ -19,7 +19,7 @@
         .company-logo {
             max-width: 180px;
             height: auto;
-            margin: 10px 0 15px;
+            margin: 15px 0;
         }
         .title {
             color: #003087;
@@ -80,7 +80,7 @@
 
         <form id="loginForm">
             <label>USERID</label>
-            <input type="text" id="username" required>
+            <input type="text" id="username" placeholder="Enter your USERID" required>
 
             <label>Password</label>
             <input type="password" id="password" required>
@@ -98,16 +98,22 @@
     </div>
 
     <script>
-        // Load selected company logo and name
+        // Load selected company logo
         const company = sessionStorage.getItem('selectedCompany') || "Your Organization";
         const logoUrl = sessionStorage.getItem('companyLogo');
 
+        const logoImg = document.getElementById('companyLogoImg');
         if (logoUrl) {
-            document.getElementById('companyLogoImg').src = logoUrl;
+            logoImg.src = logoUrl;
         } else {
-            // Default Boeing logo if none selected
-            document.getElementById('companyLogoImg').src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
+            // Default Boeing logo
+            logoImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
         }
+
+        // Fallback if image fails to load
+        logoImg.onerror = () => {
+            logoImg.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png";
+        };
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
