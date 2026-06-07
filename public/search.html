@@ -46,7 +46,6 @@
             width: 52px;
             height: 52px;
             object-fit: contain;
-            border-radius: 6px;
         }
     </style>
 </head>
@@ -63,30 +62,13 @@
 
     <script>
         const organizations = [
-            { 
-                name: "Boeing", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png" 
-            },
-            { 
-                name: "United Airlines", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/United_Airlines_Logo.svg/512px-United_Airlines_Logo.svg.png" 
-            },
-            { 
-                name: "Siemens Energy", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Siemens_Energy_logo.svg/512px-Siemens_Energy_logo.svg.png" 
-            },
-            { 
-                name: "Lockheed Martin", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Lockheed_Martin_logo_%282011–2022%29.svg/512px-Lockheed_Martin_logo_%282011–2022%29.svg.png" 
-            },
-            { 
-                name: "General Electric", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/General_Electric_logo.svg/512px-General_Electric_logo.svg.png" 
-            },
-            { 
-                name: "Delta Air Lines", 
-                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Delta_Air_Lines_Logo.svg/512px-Delta_Air_Lines_Logo.svg.png" 
-            }
+            { name: "Boeing", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Boeing_logo.svg/512px-Boeing_logo.svg.png" },
+            { name: "United Airlines", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/United_Airlines_Logo.svg/512px-United_Airlines_Logo.svg.png" },
+            { name: "Siemens Energy", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Siemens_Energy_logo.svg/512px-Siemens_Energy_logo.svg.png" },
+            { name: "Lockheed Martin", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Lockheed_Martin_Logo.svg/512px-Lockheed_Martin_Logo.svg.png" },
+            { name: "General Electric", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/General_Electric_logo.svg/512px-General_Electric_logo.svg.png" },
+            { name: "Delta Air Lines", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Delta_Air_Lines_Logo.svg/512px-Delta_Air_Lines_Logo.svg.png" },
+            { name: "American Airlines", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/American_Airlines_logo_2013.svg/512px-American_Airlines_logo_2013.svg.png" }
         ];
 
         function renderOrgs(list) {
@@ -110,13 +92,11 @@
 
         function filterOrgs() {
             const term = document.getElementById('searchInput').value.toLowerCase().trim();
-            const filtered = organizations.filter(o => 
-                o.name.toLowerCase().includes(term)
-            );
+            const filtered = organizations.filter(o => o.name.toLowerCase().includes(term));
             renderOrgs(filtered.length ? filtered : organizations);
         }
 
-        // Initial render
+        // Initial load
         renderOrgs(organizations);
     </script>
 </body>
